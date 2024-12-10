@@ -84,12 +84,17 @@ extension RMCharacterListView: RMCharacterListViewViewModelDelegate {
     }
     
     func didLoadInitialCharacters() {
-        self.spinner.stopAnimating()
-        self.collectionView.isHidden = false
+        spinner.stopAnimating()
+        collectionView.isHidden = false
         collectionView.reloadData()
         UIView.animate(withDuration: 0.4) {
             self.collectionView.alpha = 1
         }
+    }
 
+    func didLoadMoreCharacters(with newIndexPaths: [IndexPath]) {
+        collectionView.performBatchUpdates {
+            self.collectionView.insertItems(at: newIndexPaths)
+        }
     }
 }
