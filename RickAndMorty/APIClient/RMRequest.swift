@@ -71,7 +71,9 @@ final class RMRequest {
         self.pathComponents = pathComponents
         self.queryParameters = queryParameters
     }
-
+    
+    /// Attemt to create request
+    /// - Parameter url: URL to parse
     convenience init?(url: URL) {
          let string = url.absoluteString
          if !string.contains(Constants.baseUrl) {
