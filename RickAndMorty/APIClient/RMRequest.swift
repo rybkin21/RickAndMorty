@@ -14,7 +14,7 @@ final class RMRequest {
         static let baseUrl = "https://rickandmortyapi.com/api"
     }
     /// Desired endpoint
-    private let endPoint: RMEndpoint
+    let endPoint: RMEndpoint
 
     /// Path components for API, if any
     private let pathComponents: [String]
@@ -71,7 +71,9 @@ final class RMRequest {
         self.pathComponents = pathComponents
         self.queryParameters = queryParameters
     }
-
+    
+    /// Attemt to create request
+    /// - Parameter url: URL to parse
     convenience init?(url: URL) {
          let string = url.absoluteString
          if !string.contains(Constants.baseUrl) {
@@ -125,4 +127,5 @@ final class RMRequest {
 
 extension RMRequest {
     static let listCharactersRequests = RMRequest(endPoint: .character)
+    static let listEpisodesRequest = RMRequest(endPoint: .episode)
 }
