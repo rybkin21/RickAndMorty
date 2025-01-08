@@ -12,7 +12,7 @@ import Foundation
     /// Endpoint to get character info
     case character
     /// Endpoint to get loation info
-    case loation
+    case location
     /// Endpoint to get episode info
     case episode
 }
