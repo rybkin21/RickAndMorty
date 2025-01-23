@@ -33,7 +33,7 @@ final class RMService {
         completion: @escaping (Result<T, Error>) -> Void
     ) {
         if let cachedData = cacheManager.cachedResponse(
-            for: request.endPoint,
+            for: request.endpoint,
             url: request.url
         ) {
             do {
@@ -60,7 +60,7 @@ final class RMService {
             do {
                 let result = try JSONDecoder().decode(type.self, from: data)
                 self?.cacheManager.setCache(
-                    for: request.endPoint,
+                    for: request.endpoint,
                     url: request.url,
                     data: data
                 )
