@@ -37,7 +37,7 @@ final class RMEpisodeListViewViewModel: NSObject {
     private var episodes: [RMEpisode] = [] {
         didSet {
             for episode in episodes {
-                let viewModel = RMCharacterEpisodeCollectionViewCellVeiwModel(
+                let viewModel = RMCharacterEpisodeCollectionViewCellViewModel(
                     episodeDataUrl: URL(string: episode.url),
                     borderColor: borderColors.randomElement() ?? .systemBlue
                 )
@@ -48,7 +48,7 @@ final class RMEpisodeListViewViewModel: NSObject {
         }
     }
 
-    private var cellViewModels: [RMCharacterEpisodeCollectionViewCellVeiwModel] = []
+    private var cellViewModels: [RMCharacterEpisodeCollectionViewCellViewModel] = []
 
     private var apiInfo: RMGetAllEpisodesResponse.Info? = nil
 
