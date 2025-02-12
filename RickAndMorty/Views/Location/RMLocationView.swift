@@ -69,6 +69,8 @@ final class RMLocationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Configure
+    
     private func configureTable() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -93,6 +95,8 @@ final class RMLocationView: UIView {
     }
 }
 
+// MARK: - UITableViewDelegate
+
 extension RMLocationView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -103,6 +107,8 @@ extension RMLocationView: UITableViewDelegate {
     }
 
 }
+
+// MARK: - UITableViewDataSource
 
 extension RMLocationView: UITableViewDataSource {
 
@@ -126,6 +132,8 @@ extension RMLocationView: UITableViewDataSource {
     }
 }
 
+// MARK: - UIScrollViewDelegate
+
 extension RMLocationView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let viewModel = viewModel,
@@ -140,9 +148,7 @@ extension RMLocationView: UIScrollViewDelegate {
             let totalScrollViewFixedHeight = scrollView.frame.size.height
 
             if offset >= (totalContentHeight - totalScrollViewFixedHeight - 120) {
-                DispatchQueue.main.async {
-                    self?.showLoadingIndicator()
-                }
+                self?.showLoadingIndicator()
                 viewModel.fetchAdditionalLocations()
             }
             t.invalidate()
