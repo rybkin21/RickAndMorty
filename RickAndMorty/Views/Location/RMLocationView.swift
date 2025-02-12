@@ -8,13 +8,14 @@
 import UIKit
 
 protocol RMLocationViewDelegate: AnyObject {
-    func rmLocationView(_ locationView: RMLocationView, didSelect location: RMLocation)
+    func rmLocationView(_ locationView: RMLocationView,
+                        didSelect location: RMLocation)
 }
 
 final class RMLocationView: UIView {
 
     public weak var delegate: RMLocationViewDelegate?
-    
+
     private var viewModel: RMLocationViewViewModel? {
         didSet {
             spinner.stopAnimating()
@@ -22,6 +23,15 @@ final class RMLocationView: UIView {
             tableView.reloadData()
             UIView.animate(withDuration: 0.3) {
                 self.tableView.alpha = 1
+            }
+
+            viewModel?.registerDidFinishPaginationBlock { [weak self] in
+                DispatchQueue.main.async {
+                    // Loading indicator go bye bye
+                    self?.tableView.tableFooterView = nil
+                    // Reload data
+                    self?.tableView.reloadData()
+                }
             }
         }
     }
@@ -59,6 +69,8 @@ final class RMLocationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Configure
+    
     private func configureTable() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -83,6 +95,8 @@ final class RMLocationView: UIView {
     }
 }
 
+// MARK: - UITableViewDelegate
+
 extension RMLocationView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -93,6 +107,8 @@ extension RMLocationView: UITableViewDelegate {
     }
 
 }
+
+// MARK: - UITableViewDataSource
 
 extension RMLocationView: UITableViewDataSource {
 
@@ -113,5 +129,34 @@ extension RMLocationView: UITableViewDataSource {
         let cellViewModel = cellViewModels[indexPath.row]
         cell.configure(with: cellViewModel)
         return cell
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension RMLocationView: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let viewModel = viewModel,
+              !viewModel.cellViewModels.isEmpty,
+              viewModel.shouldShowLoadMoreIndicator,
+              !viewModel.isLoadingMoreLocations else {
+            return
+        }
+        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { [weak self] t in
+            let offset = scrollView.contentOffset.y
+            let totalContentHeight = scrollView.contentSize.height
+            let totalScrollViewFixedHeight = scrollView.frame.size.height
+
+            if offset >= (totalContentHeight - totalScrollViewFixedHeight - 120) {
+                self?.showLoadingIndicator()
+                viewModel.fetchAdditionalLocations()
+            }
+            t.invalidate()
+        }
+    }
+
+    private func showLoadingIndicator() {
+        let footer = RMTableLoadingFooterView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: 100))
+        tableView.tableFooterView = footer
     }
 }
